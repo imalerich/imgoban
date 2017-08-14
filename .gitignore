@@ -1,0 +1,4 @@
+bin*
+sessions*
+*.swp
+*.vim
