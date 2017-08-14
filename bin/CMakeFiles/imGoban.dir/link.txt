@@ -1,0 +1,1 @@
+/usr/bin/g++   -std=c++11 -Wall   -lm -fPIC -rdynamic CMakeFiles/imGoban.dir/src/main.cpp.o  -o imGoban -Wl,-Bstatic -lAdelie2d -Wl,-Bdynamic -lallegro -lallegro_acodec -lallegro_audio -lallegro_color -lallegro_dialog -lallegro_image -lallegro_memfile -lallegro_physfs -lallegro_primitives -lallegro_font -lallegro_ttf -lvorbis -ldumb -lFLAC -logg -lopenal 

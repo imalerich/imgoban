@@ -1,0 +1,7 @@
+/home/imalerich/dev/imgoban/bin/CMakeFiles/install/strip.dir
+/home/imalerich/dev/imgoban/bin/CMakeFiles/edit_cache.dir
+/home/imalerich/dev/imgoban/bin/CMakeFiles/list_install_components.dir
+/home/imalerich/dev/imgoban/bin/CMakeFiles/install/local.dir
+/home/imalerich/dev/imgoban/bin/CMakeFiles/rebuild_cache.dir
+/home/imalerich/dev/imgoban/bin/CMakeFiles/imGoban.dir
+/home/imalerich/dev/imgoban/bin/CMakeFiles/install.dir
