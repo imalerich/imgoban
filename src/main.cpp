@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <adelie.h>
+#include <adelie2d/adelie.h>
 
 #define PI 3.14159265f
 
