@@ -80,26 +80,29 @@ void Goban::randInit() {
     for (unsigned y=0; y<size; y++) {
 	for (unsigned x=0; x<size; x++) {
 	    unsigned r = rand() % 4;
-	    Ad_Vector2 pos(
+	    Ad_Rect bounds(
 		GRID_OFF + SPACING * x - SPACING/2,
-		GRID_OFF + SPACING * y - SPACING/2
+		GRID_OFF + SPACING * y - SPACING/2,
+		SPACING, SPACING
 	    );
+
 	    if (r < 2) {
 		// There will be a stone, so add the drop shadow.
-		Ad_GameNode_p shadow = make_shared<Ad_GameNode>("../img/shadow.png", Ad_Vector2(
-		    pos.x - (52 - SPACING)/2 + 5,
-		    pos.y - (52 - SPACING)/2 + 5
+		const auto OFF = SPACING * 0.25f;
+		Ad_GameNode_p shadow = make_shared<Ad_GameNode>("../img/shadow.png", Ad_Rect(
+		    bounds.get_pos().x - OFF, bounds.get_pos().y - OFF * 0.3,
+		    bounds.get_size().x + 2 * OFF, bounds.get_size().y + 2 * OFF
 		));
 		node->add_child(shadow);
 	    }
 
 	    if (r == 0) {
 		// Black Stone.
-		Ad_GameNode_p shadow = make_shared<Ad_GameNode>("../img/slate.png", pos);
+		Ad_GameNode_p shadow = make_shared<Ad_GameNode>("../img/slate.png", bounds);
 		node->add_child(shadow);
 	    } else if (r == 1) {
 		// White Stone.
-		Ad_GameNode_p shadow = make_shared<Ad_GameNode>("../img/shell.png", pos);
+		Ad_GameNode_p shadow = make_shared<Ad_GameNode>("../img/shell.png", bounds);
 		node->add_child(shadow);
 	    } // Else no stone.
 	}

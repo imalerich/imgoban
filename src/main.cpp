@@ -8,8 +8,8 @@
 #define PI 3.14159265f
 #define SHIT 30
 
-unsigned SCREEN_W = 1400;
-unsigned SCREEN_H = 900;
+unsigned SCREEN_W = 800;
+unsigned SCREEN_H = 600;
 Ad_Scene_p scene;
 Goban_p g;
 
