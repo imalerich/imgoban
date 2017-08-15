@@ -22,6 +22,7 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 
 add_executable(imGoban
     src/main.cpp
+    src/goban.cpp
 )
 
 # Link Allegro with our library
