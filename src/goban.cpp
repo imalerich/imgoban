@@ -87,8 +87,8 @@ void Goban::randInit() {
 	    if (r < 2) {
 		// There will be a stone, so add the drop shadow.
 		Ad_GameNode_p shadow = make_shared<Ad_GameNode>("../img/shadow.png", Ad_Vector2(
-		    pos.x - (52 - SPACING)/2, 
-		    pos.y - (52 - SPACING)/2 + 6
+		    pos.x - (52 - SPACING)/2 + 5,
+		    pos.y - (52 - SPACING)/2 + 5
 		));
 		node->add_child(shadow);
 	    }
