@@ -12,4 +12,7 @@ extern unsigned SCREEN_H;
 #define DARK_COLOR al_map_rgb(76, 60, 22)
 #define LIGHT_COLOR al_map_rgb(223, 189, 109)
 
+#define SLATE 1
+#define SHELL 2
+
 #endif

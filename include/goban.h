@@ -1,10 +1,12 @@
 #ifndef GOBAN_H
 #define GOBAN_H
 
+#include <memory>
 #include <adelie2d/adelie.h>
 
-class Goban;
+using namespace std;
 
+class Goban;
 typedef shared_ptr<Goban> Goban_p;
 
 class Goban {
@@ -15,18 +17,18 @@ public:
     unsigned getGridSize();
     unsigned getBoardSize();
 
+    Ad_GameNode_p node;
+    Ad_GameNode_p grid;
+
 private:
     ALLEGRO_FONT * font;
 
     const Ad_Scene_p scene;
-    Ad_GameNode_p node;
-    Ad_GameNode_p grid;
     const unsigned size;
 
     void addToScene();
     void addGridToBoard();
     void addStarsToBoard();
-    void randInit();
 };
 
 #endif

@@ -21,8 +21,10 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 # Build the binary
 
 add_executable(imGoban
-    src/main.cpp
+    src/game.cpp
+    src/move.cpp
     src/goban.cpp
+    src/main.cpp
 )
 
 # Link Allegro with our library

@@ -7,7 +7,6 @@ Goban::Goban(Ad_Scene_p Scene, unsigned BoardSize) :
 	scene{Scene}, size{BoardSize} {
 
     addToScene();
-    randInit();
 }
 
 unsigned Goban::getGridSize() {
@@ -72,43 +71,6 @@ void Goban::addStarsToBoard() {
 	}
     }
 }
-
-void Goban::randInit() {
-    const unsigned GRID_OFF = (getBoardSize() - getGridSize())/2;
-    const unsigned SPACING = getGridSize()/(size-1);
-
-    for (unsigned y=0; y<size; y++) {
-	for (unsigned x=0; x<size; x++) {
-	    unsigned r = rand() % 4;
-	    Ad_Rect bounds(
-		GRID_OFF + SPACING * x - SPACING/2,
-		GRID_OFF + SPACING * y - SPACING/2,
-		SPACING, SPACING
-	    );
-
-	    if (r < 2) {
-		// There will be a stone, so add the drop shadow.
-		const auto OFF = SPACING * 0.25f;
-		Ad_GameNode_p shadow = make_shared<Ad_GameNode>("../img/shadow.png", Ad_Rect(
-		    bounds.get_pos().x - OFF, bounds.get_pos().y - OFF * 0.3,
-		    bounds.get_size().x + 2 * OFF, bounds.get_size().y + 2 * OFF
-		));
-		node->add_child(shadow);
-	    }
-
-	    if (r == 0) {
-		// Black Stone.
-		Ad_GameNode_p shadow = make_shared<Ad_GameNode>("../img/slate.png", bounds);
-		node->add_child(shadow);
-	    } else if (r == 1) {
-		// White Stone.
-		Ad_GameNode_p shadow = make_shared<Ad_GameNode>("../img/shell.png", bounds);
-		node->add_child(shadow);
-	    } // Else no stone.
-	}
-    }
-}
-
 
 /* ---------------------------------------------------------------------------------------------
  * Render the text labels indicating position.
