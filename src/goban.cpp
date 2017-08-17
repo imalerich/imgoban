@@ -77,7 +77,6 @@ void Goban::addGridToBoard() {
 
 void Goban::addStarsToBoard() {
     const float POSITIONS[] = { 3/18.0f, 9/18.0f, 15/18.0f };
-    const auto STAR_BMP = ad_create_circle_bitmap(32, DARK_COLOR);
 
     for (int i=0; i<3; i++) {
 	for (int k=0; k<3; k++) {
@@ -87,7 +86,7 @@ void Goban::addStarsToBoard() {
 		STAR_SIZE, STAR_SIZE
 	    ));
 
-	    star->set_bitmap(STAR_BMP);
+	    star->set_bitmap(ad_create_circle_bitmap(STAR_SIZE, DARK_COLOR));
 	    grid->add_child(star);
 	}
     }

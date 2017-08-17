@@ -77,8 +77,9 @@ public:
 
     operator std::string() const { 
 	string out = "";
+	for (unsigned i=0; i<2*size-1; i++) { out += "_"; }
 	for (unsigned i=0; i<(size * size); i++) {
-	    if (i % size == 0 && i != 0) { out += "\n"; }
+	    if (i % size == 0) { out += "\n"; }
 	    if (state[i] == NOPLAYER) { out += ". "; }
 	    if (state[i] == SLATE) { out += "x "; }
 	    if (state[i] == SHELL) { out += "o "; }

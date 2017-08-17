@@ -77,6 +77,12 @@ public:
      * \brief A stone is on the board iff it has a graphical representation.
      */
     inline bool is_on_board() { return stone != nullptr; }
+
+    /**
+     * \fn inline bool is_captured() { return !is_on_board(); }
+     * \brief A stone is considered captured iff it is not on the board.
+     */
+    inline bool is_captured() { return !is_on_board(); }
     
     // meta data
     Move_w parent; /** Parent Move.*/
