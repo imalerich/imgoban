@@ -4,6 +4,8 @@
 #include <memory>
 #include <adelie2d/adelie.h>
 
+#include "move.h"
+
 using namespace std;
 
 class Goban;
@@ -14,8 +16,26 @@ public:
     Goban(Ad_Scene_p Scene, unsigned BoardSize);
 
     void renderLabels();
-    unsigned getGridSize();
-    unsigned getBoardSize();
+
+    inline unsigned getGridSize() {
+	// the grid size is square, so just use the x component
+	return grid->get_bounds().get_size().x;
+    }
+
+    inline unsigned getBoardSize() {
+	// the board size is square, so just use the x component
+	return node->get_bounds().get_size().x;
+    }
+
+    /**
+     * \fn void add_graphics_for_stone(Move * stone);
+     * \brief Given a valid move of type stone with positional information,
+     * adds shadow and stone graphics for that move to the current stone
+     * and associates those with the input move.
+     * If the input move already has a shadow/stone associated with it,
+     * this method does nothing.
+     */
+    void add_graphics_for_stone(Move_p stone, const unsigned current_player);
 
     Ad_GameNode_p node;
     Ad_GameNode_p grid;

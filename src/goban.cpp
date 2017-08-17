@@ -9,12 +9,33 @@ Goban::Goban(Ad_Scene_p Scene, unsigned BoardSize) :
     addToScene();
 }
 
-unsigned Goban::getGridSize() {
-    return grid->get_bounds().get_size().x;
-}
+void Goban::add_graphics_for_stone(Move_p stone, const unsigned current_player) {
+    if (!stone || stone->is_on_board()) { return; }
 
-unsigned Goban::getBoardSize() {
-    return node->get_bounds().get_size().x;
+    // get positional information for the stone
+    const unsigned GRID_OFF = (getBoardSize() - getGridSize())/2;
+    const unsigned SPACING = getGridSize()/(size-1);
+    const unsigned SIZE = SPACING * 0.95;
+    const auto OFF = SPACING * 0.25f;
+
+    Ad_Rect bounds(
+	GRID_OFF + SPACING * stone->x - SIZE/2,
+	GRID_OFF + SPACING * stone->y - SIZE/2,
+	SIZE, SIZE
+    );
+
+    // now that we have the move, we need to add it to our scene
+    stone->shadow = make_shared<Ad_GameNode>("../img/shadow.png", Ad_Rect(
+	bounds.get_pos().x - OFF, bounds.get_pos().y - OFF * 0.3,
+	bounds.get_size().x + 2 * OFF, bounds.get_size().y + 2 * OFF
+    ), 1);
+
+    const char * img = (current_player == SLATE) ? "../img/slate.png" : "../img/shell.png";
+    stone->stone = make_shared<Ad_GameNode>(img, bounds, 2);
+
+    // add the game nodes to the scene to be rendered
+    node->add_child(stone->shadow);
+    node->add_child(stone->stone);
 }
 
 /* ---------------------------------------------------------------------------------------------

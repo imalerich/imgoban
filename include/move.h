@@ -11,12 +11,14 @@ enum class MoveType { Stone, Pass };
 
 class Move;
 typedef shared_ptr<Move> Move_p;
+typedef weak_ptr<Move> Move_w;
 typedef vector<Move_p> MoveArray;
 
-class Move {
+class Move : public std::enable_shared_from_this<Move> {
 public:
+    Move(unsigned Player, MoveType Type);
     Move(unsigned X, unsigned Y, unsigned Player, MoveType Type);
-    Move(unsigned X, unsigned Y, unsigned Player, MoveType Type, Move * Parent);
+    Move(unsigned X, unsigned Y, unsigned Player, MoveType Type, Move_w Parent);
 
     /**
      * \fn void add_child(unsigned X, unsigned Y, unsigned Player, MoveType Type);
@@ -26,13 +28,58 @@ public:
     Move_p add_child(unsigned X, unsigned Y, unsigned Player, MoveType Type);
 
     /**
+     * \fn void add_child(Move_p child);
+     * \brief Adds the node pointer as a child move.
+     */
+    Move_p add_child(Move_p child);
+
+    /**
+     * \fn Move_w find_stone(unsigned X, unsigned Y);
+     * \brief Recursively search through all parents until one is found at
+     * the given location, that stone is then returned.
+     * If multiple stones have been played on the given location,
+     * the most recent stone will be returned.
+     * Only stones currently on the board will be returned.
+     * If no stone is found, nullptr will be returned instead.
+     */
+    Move_p find_stone(unsigned X, unsigned Y);
+
+    /**
      * \fn void remove_from_parent( child);
      * \brief Removes this node from it's parent node (if it exists).
      */
     void remove_from_parent();
+
+    /**
+     * \fn void remove_from_scene();
+     * \brief Removes the stone and shadow from the
+     * scene (if they exist).
+     */
+    void remove_from_scene();
+
+    /**
+     * \fn void push_captured_stone(Move_w stone)
+     * \brief Add a reference to a stone captured when this stone was played.
+     * These can be removed when this move is undone.
+     */
+    void push_captured_stone(Move_p stone);
+
+    /**
+     * \fn Move_w pop_captured_stone()
+     * \brief Remove a captured stone from the captured list,
+     * and return the stored reference.
+     * If no more stones remain, nullptr will be returned.
+     */
+    Move_p pop_captured_stone();
+
+    /**
+     * \fn inline bool is_on_board() { return stone != nullptr; }
+     * \brief A stone is on the board iff it has a graphical representation.
+     */
+    inline bool is_on_board() { return stone != nullptr; }
     
     // meta data
-    Move * parent; /** Parent Move.*/
+    Move_w parent; /** Parent Move.*/
     const unsigned num; /** Move number = (parent.num + 1). */
 
     // move information
@@ -47,6 +94,7 @@ public:
 
 private:
     MoveArray children;
+    MoveArray captured; 
 };
 
 #endif

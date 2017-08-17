@@ -1,6 +1,8 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+#include <limits.h>
+
 extern unsigned SCREEN_W;
 extern unsigned SCREEN_H;
 
@@ -12,7 +14,14 @@ extern unsigned SCREEN_H;
 #define DARK_COLOR al_map_rgb(76, 60, 22)
 #define LIGHT_COLOR al_map_rgb(223, 189, 109)
 
+// used for permanent board state
+#define NOPLAYER 0
 #define SLATE 1
 #define SHELL 2
+// used for temporary board state
+#define LIBERTY 3
+#define SLATE_CHECKED 4
+#define SHELL_CHECKED 5
+#define INVALID UINT_MAX
 
 #endif

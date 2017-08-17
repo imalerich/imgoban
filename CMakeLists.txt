@@ -8,7 +8,7 @@ set (imGoban_VERSION_MINOR 1)
 
 # Set compiler and linker flags for gcc
 set (GCC_COVERAGE_LINK_FLAGS "-lm -fPIC")
-set (GCC_COVERAGE_COMPILE_FLAGS "-std=c++11 -Wall")
+set (GCC_COVERAGE_COMPILE_FLAGS "-std=c++14 -Wall")
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
 set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}")
@@ -24,6 +24,7 @@ add_executable(imGoban
     src/game.cpp
     src/move.cpp
     src/goban.cpp
+    src/state.cpp
     src/main.cpp
 )
 
