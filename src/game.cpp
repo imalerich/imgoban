@@ -7,6 +7,8 @@ Game::Game(Ad_Scene_p Scene, unsigned BoardSize)
 	: size{BoardSize}, scene{Scene} {
 
     board = make_shared<Goban>(scene, BoardSize);
+	engine_controller = make_shared<gtp::Controller>(BoardSize, 6.5f);
+	engine_controller->attach_engine("");
     root_move = nullptr;
     current_move = nullptr;
     current_player = SLATE;
@@ -17,17 +19,20 @@ Game::Game(Ad_Scene_p Scene, unsigned BoardSize)
 }
 
 void Game::update() {
-    if (ad_is_button_released(0)) {
-	int x = round((size-1) * (ad_get_mouse_x() - board->grid->get_absolute_pos().x) / board->getGridSize());
-	int y = round((size-1) * (ad_get_mouse_y() - board->grid->get_absolute_pos().y) / board->getGridSize());
-	add_stone(x, y);
+	if (current_player == SLATE) {
+		if (ad_is_button_released(0)) {
+			int x = round((size-1) * (ad_get_mouse_x() - board->grid->get_absolute_pos().x) / board->getGridSize());
+			int y = round((size-1) * (ad_get_mouse_y() - board->grid->get_absolute_pos().y) / board->getGridSize());
+			add_stone(x, y);
 
-    } else if (ad_is_button_released(1)) {
-	undo_stone();
-
-    } else if (ad_is_button_released(3)) {
-	pass();
-    }
+		} else if (ad_is_button_released(3)) {
+			pass();
+		}
+	} else {
+		// ask the engine to make a move, then add it to the board
+		gtp::Vertex v = engine_controller->gen_move(gtp::PLAYER_WHITE);
+		add_stone(v.get_x(), v.get_y());
+	}
 }
 
 void Game::render() {
@@ -38,10 +43,10 @@ bool Game::add_stone(unsigned X, unsigned Y) {
     if (!is_legal(X, Y, current_player)) { return false; }
 
     if (!root_move) { // case: this is the root move of the game
-	root_move = make_shared<Move>(X, Y, current_player, MoveType::Stone);
-	current_move = root_move;
+		root_move = make_shared<Move>(X, Y, current_player, MoveType::Stone);
+		current_move = root_move;
     } else { // case: moves already exist, add this as a child of the current move
-	current_move = current_move->add_child(X, Y, current_player, MoveType::Stone);
+		current_move = current_move->add_child(X, Y, current_player, MoveType::Stone);
     }
 
     // update the internal board state & scene to include this move
@@ -57,16 +62,22 @@ bool Game::add_stone(unsigned X, unsigned Y) {
     // search neighboring stones, if any have 0 liberties, 
     // remove the group from the board
     for (int x=-1; x<=1; x++) {
-	for (int y=-1; y<=1; y++) {
-	    // we don't need to check these stones
-	    if (abs(x) == abs(y)) { continue; }
+		for (int y=-1; y<=1; y++) {
+			// we don't need to check these stones
+			if (abs(x) == abs(y)) { continue; }
 
-	    // check the number of liberties for neighboring opposing stones
-	    if (get_stone(X+x, Y+y) == opposing && num_liberties(X+x, Y+y) == 0) {
-		remove_group(X+x, Y+y, current_move);
+			// check the number of liberties for neighboring opposing stones
+			if (get_stone(X+x, Y+y) == opposing && num_liberties(X+x, Y+y) == 0) {
+			remove_group(X+x, Y+y, current_move);
     }}}
 
     cout << (string)(*this) << endl << endl;
+
+	// let the controller know we made a move
+	// TODO - refactor this implementation
+	if (current_player == SLATE) {
+		engine_controller->play_move(X, Y, gtp::PLAYER_BLACK);
+	}
     
     swap_turn();
     return true;
@@ -84,8 +95,8 @@ bool Game::undo_stone() {
 
     // update the internal board state to remove this move
     if (current_move->type == MoveType::Stone) {
-	set_stone(current_move->x, current_move->y, NOPLAYER);
-	history.pop_back();
+		set_stone(current_move->x, current_move->y, NOPLAYER);
+		history.pop_back();
     }
 
     // remove this move from the tree & set parent as the new current
@@ -94,10 +105,10 @@ bool Game::undo_stone() {
 
     // loop through each removed stone by this play, and add them back to the board
     for (Move_p killed = current_move->pop_captured_stone(); 
-	    killed; killed = current_move->pop_captured_stone()) {
-	// add the killed stone back to the board
-	board->add_graphics_for_stone(killed, current_player);
-	set_stone(killed->x, killed->y, killed->player);
+			killed; killed = current_move->pop_captured_stone()) {
+		// add the killed stone back to the board
+		board->add_graphics_for_stone(killed, current_player);
+		set_stone(killed->x, killed->y, killed->player);
     }
 
     // swap back to the current turn
@@ -129,27 +140,27 @@ unsigned Game::num_liberties(unsigned X, unsigned Y, unsigned Player, bool clean
     set_stone(X, Y, (current == SLATE) ? SLATE_CHECKED : SHELL_CHECKED); // set the board state to checked
 
     for (int x=-1; x<=1; x++) {
-	for (int y=-1; y<=1; y++) {
-	    // we don't need to check these stones
-	    if (abs(x) == abs(y)) { continue; }
-	    // found an empty space, set this as a liberty
-	    if (get_stone(X+x, Y+y) == NOPLAYER) { set_stone(X+x, Y+y, LIBERTY); }
-	    // found a friendly stone, recurse to that friendly stone, but do not clean the board
-	    // this should NEVER be a hypothetical test, and will not need to clean changes
-	    if (get_stone(X+x, Y+y) == current) { num_liberties(X+x, Y+y, NOPLAYER, false); }
+		for (int y=-1; y<=1; y++) {
+			// we don't need to check these stones
+			if (abs(x) == abs(y)) { continue; }
+			// found an empty space, set this as a liberty
+			if (get_stone(X+x, Y+y) == NOPLAYER) { set_stone(X+x, Y+y, LIBERTY); }
+			// found a friendly stone, recurse to that friendly stone, but do not clean the board
+			// this should NEVER be a hypothetical test, and will not need to clean changes
+			if (get_stone(X+x, Y+y) == current) { num_liberties(X+x, Y+y, NOPLAYER, false); }
     }}
 
     // count and return the liberties
     unsigned liberties = 0;
     if (clean) { // reset the temporary board states to their proper values
-	for (unsigned i=0; i<(size * size); i++) {
-	    liberties += (state[i] == LIBERTY);
-	    state[i] = (state[i] == LIBERTY) ? NOPLAYER : state[i];
-	    state[i] = (state[i] == SLATE_CHECKED) ? SLATE : state[i];
-	    state[i] = (state[i] == SHELL_CHECKED) ? SHELL : state[i];
-	}
+		for (unsigned i=0; i<(size * size); i++) {
+			liberties += (state[i] == LIBERTY);
+			state[i] = (state[i] == LIBERTY) ? NOPLAYER : state[i];
+			state[i] = (state[i] == SLATE_CHECKED) ? SLATE : state[i];
+			state[i] = (state[i] == SHELL_CHECKED) ? SHELL : state[i];
+		}
 
-	set_stone(X, Y, original);
+		set_stone(X, Y, original);
     }
 
     return liberties; // only the root call of recursion needs to return anything
@@ -165,14 +176,14 @@ bool Game::does_stone_capture(unsigned X, unsigned Y, unsigned Player) {
 
     // check adjacent stones
     for (int x=-1; x<=1; x++) {
-	for (int y=-1; y<=1; y++) {
-	    // we don't need to check these stones
-	    if (abs(x) == abs(y)) { continue; }
+		for (int y=-1; y<=1; y++) {
+			// we don't need to check these stones
+			if (abs(x) == abs(y)) { continue; }
 
-	    // check the number of libertios for neighboring opposing stones
-	    if (get_stone(X+x, Y+y) == opposing && num_liberties(X+x, Y+y) == 0) {
-		set_stone(X, Y, NOPLAYER);
-		return true;
+			// check the number of libertios for neighboring opposing stones
+			if (get_stone(X+x, Y+y) == opposing && num_liberties(X+x, Y+y) == 0) {
+			set_stone(X, Y, NOPLAYER);
+			return true;
     }}}
 
     // test is done, reset the position to noplayer
@@ -188,9 +199,9 @@ void Game::remove_group(unsigned X, unsigned Y, Move_p killer) {
     // first we're going to need the actual move reference
     Move_p m = current_move->find_stone(X, Y);
     if (!m) { 
-	cerr << "Could not find valid stone in move hierarchy!" << endl;
-	exit(1);
-	return; 
+		cerr << "Could not find valid stone in move hierarchy!" << endl;
+		exit(1);
+		return; 
     }
 
     // remove this stones graphics (keep it in the hierarchy)
@@ -201,10 +212,10 @@ void Game::remove_group(unsigned X, unsigned Y, Move_p killer) {
 
     // recurse to adjacent stones (of the current players)
     for (int x=-1; x<=1; x++) {
-	for (int y=-1; y<=1; y++) {
-	    // we don't need to check these stones
-	    if (abs(x) == abs(y)) { continue; }
-	    if (get_stone(X+x, Y+y) == remove_for) { remove_group(X+x, Y+y, killer); }
+		for (int y=-1; y<=1; y++) {
+			// we don't need to check these stones
+			if (abs(x) == abs(y)) { continue; }
+			if (get_stone(X+x, Y+y) == remove_for) { remove_group(X+x, Y+y, killer); }
     }}
 }
 
@@ -214,9 +225,9 @@ bool Game::is_move_unique(unsigned X, unsigned Y, unsigned Player) {
     State check(size, state.get());
 
     for (auto const state : history) {
-	if (*state == check) {
-	    set_stone(X, Y, NOPLAYER);
-	    return false;
+		if (*state == check) {
+			set_stone(X, Y, NOPLAYER);
+			return false;
     }}
 
     // reset the board state

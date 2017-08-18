@@ -33,57 +33,55 @@ add_executable(imGoban
 IF (WIN32 AND MINGW)
 
     target_link_libraries(imGoban
-	${CMAKE_SOURCE_DIR}/adelie2d/bin/libAdelie2d.a
+		${CMAKE_SOURCE_DIR}/adelie2d/bin/libAdelie2d.a
 
-	libgdiplus.a
-	libuuid.a
-	libkernel32.a
-	libwinmm.a
-	libpsapi.a
-	libopengl32.a
-	libglu32.a
-	libuser32.a
-	libcomdlg32.a
-	libgdi32.a
-	libshell32.a
-	libole32.a
-	libadvapi32.a
-	libws2_32.a
-	libshlwapi.a
+		libgdiplus.a
+		libuuid.a
+		libkernel32.a
+		libwinmm.a
+		libpsapi.a
+		libopengl32.a
+		libglu32.a
+		libuser32.a
+		libcomdlg32.a
+		libgdi32.a
+		libshell32.a
+		libole32.a
+		libadvapi32.a
+		libws2_32.a
+		libshlwapi.a
     )
 
 ELSEIF (WIN32 AND NOT MINGW)
 
     target_link_libraries(imGoban
-	${CMAKE_SOURCE_DIR}/adelie2d/bin/libAdelie2d.lib
+		${CMAKE_SOURCE_DIR}/adelie2d/bin/libAdelie2d.lib
     )
 
 ELSEIF (UNIX AND NOT MINGW)
 		
     target_link_libraries(imGoban
-	libAdelie2d.a
-	allegro
-	allegro_acodec
-	allegro_audio
-	allegro_color
-	allegro_dialog
-	allegro_image
-	allegro_memfile
-	allegro_physfs
-	allegro_primitives
-	allegro_font
-	allegro_ttf
-	vorbis
-	dumb
-	FLAC
-	ogg
-	openal
+		imGtp
+		Adelie2d
+		allegro
+		allegro_acodec
+		allegro_audio
+		allegro_color
+		allegro_dialog
+		allegro_image
+		allegro_memfile
+		allegro_physfs
+		allegro_primitives
+		allegro_font
+		allegro_ttf
+		vorbis
+		dumb
+		FLAC
+		ogg
+		openal
     )
 
 ENDIF()
-
-# use the headers provided by the system
-include_directories("${PROJECT_SOURCE_DIR}/adelie2d/include")
 
 # Add the install targets
 install (TARGETS imGoban DESTINATION bin)

@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <adelie2d/adelie.h>
+#include <imGtp/imGtp.h>
 
 using namespace std;
 
@@ -98,6 +99,8 @@ private:
     Move_p root_move;
     Move_p current_move;
 
+	// this is our interface to the current go engine
+	gtp::Controller_p engine_controller;
     unsigned current_player;
 
     /**

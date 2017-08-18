@@ -7,8 +7,8 @@
 
 #define SHIT 30
 
-unsigned SCREEN_W = 1366;
-unsigned SCREEN_H = 768;
+unsigned SCREEN_W = 1920;
+unsigned SCREEN_H = 1080;
 Ad_Scene_p scene;
 Game_p g;
 
