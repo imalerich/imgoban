@@ -99,6 +99,17 @@ private:
     Move_p root_move;
     Move_p current_move;
 
+	// indicates the position of the most recently played move
+	Ad_GameNode_p move_indicator;
+
+	/**
+	 * \fn void create_update_move_indicator();
+	 * \brief Creates the move indicator if it does not exist,
+	 * if it does, the position is updated to match the most recently played 
+	 * stone.
+	 */
+	void create_update_move_indicator();
+
 	// this is our interface to the current go engine
 	gtp::Controller_p engine_controller;
     unsigned current_player;

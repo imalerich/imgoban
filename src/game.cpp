@@ -11,6 +11,7 @@ Game::Game(Ad_Scene_p Scene, unsigned BoardSize)
 	engine_controller->attach_engine("");
     root_move = nullptr;
     current_move = nullptr;
+	move_indicator = nullptr;
     current_player = SLATE;
 
     // Initialize an empty board.
@@ -33,6 +34,8 @@ void Game::update() {
 		gtp::Vertex v = engine_controller->gen_move(gtp::PLAYER_WHITE);
 		add_stone(v.get_x(), v.get_y());
 	}
+
+	create_update_move_indicator();
 }
 
 void Game::render() {
@@ -81,6 +84,36 @@ bool Game::add_stone(unsigned X, unsigned Y) {
     
     swap_turn();
     return true;
+}
+
+void Game::create_update_move_indicator() {
+	// no current move, no move indicator, nothing to do
+	if (!current_move && !move_indicator) { return; }
+
+	// no current move, but indicator exists, remove it
+	if (!current_move && move_indicator) {
+		move_indicator->remove_from_parent();
+		move_indicator = nullptr;
+	}
+	
+    // get positional information for the stone
+    const unsigned SPACING = board->getGridSize()/(size-1);
+    const unsigned SIZE = SPACING * 0.225;
+
+	// move indicator currently does not exist
+	// don't worry about position yet, that will be set below
+	if (current_move && !move_indicator) {
+		move_indicator = make_shared<Ad_GameNode>(Ad_Rect(
+			0, 0, SIZE, SIZE), 5);
+		move_indicator->set_bitmap(ad_create_rect_bitmap(Ad_Vector2(SIZE, SIZE), INDICATOR_COLOR));
+		board->node->add_child(move_indicator);
+	}
+
+	// now set the position based on the current move
+	move_indicator->set_pos(Ad_Vector2(
+		current_move->stone->get_pos().x + current_move->stone->get_size().x/2 - SIZE/2,
+		current_move->stone->get_pos().y + current_move->stone->get_size().y/2 - SIZE/2
+	));
 }
 
 void Game::pass() {

@@ -13,6 +13,7 @@ extern unsigned SCREEN_H;
 #define STAR_SIZE 8 
 #define DARK_COLOR al_map_rgb(76, 60, 22)
 #define LIGHT_COLOR al_map_rgb(223, 189, 109)
+#define INDICATOR_COLOR al_map_rgb(50, 131, 252)
 
 // used for permanent board state
 #define NOPLAYER 0

@@ -19,15 +19,15 @@ void Goban::add_graphics_for_stone(Move_p stone, const unsigned current_player) 
     const auto OFF = SPACING * 0.25f;
 
     Ad_Rect bounds(
-	GRID_OFF + SPACING * stone->x - SIZE/2,
-	GRID_OFF + SPACING * stone->y - SIZE/2,
-	SIZE, SIZE
+		GRID_OFF + SPACING * stone->x - SIZE/2,
+		GRID_OFF + SPACING * stone->y - SIZE/2,
+		SIZE, SIZE
     );
 
     // now that we have the move, we need to add it to our scene
     stone->shadow = make_shared<Ad_GameNode>("../img/shadow.png", Ad_Rect(
-	bounds.get_pos().x - OFF, bounds.get_pos().y - OFF * 0.3,
-	bounds.get_size().x + 2 * OFF, bounds.get_size().y + 2 * OFF
+		bounds.get_pos().x - OFF, bounds.get_pos().y - OFF * 0.3,
+		bounds.get_size().x + 2 * OFF, bounds.get_size().y + 2 * OFF
     ), 1);
 
     const char * img = (current_player == SLATE) ? "../img/slate.png" : "../img/shell.png";
@@ -58,8 +58,8 @@ void Goban::addToScene() {
     addStarsToBoard();
 
     if (!(font = al_load_ttf_font("../fonts/OpenSans-Regular.ttf", 12, 0))) {
-	cerr << "Failed to load board font at: ../fonts/OpenSans-Regular.ttf" << endl;
-	exit(1);
+		cerr << "Failed to load board font at: ../fonts/OpenSans-Regular.ttf" << endl;
+		exit(1);
     }
 }
 
@@ -79,16 +79,16 @@ void Goban::addStarsToBoard() {
     const float POSITIONS[] = { 3/18.0f, 9/18.0f, 15/18.0f };
 
     for (int i=0; i<3; i++) {
-	for (int k=0; k<3; k++) {
-	    Ad_GameNode_p star = make_shared<Ad_GameNode>(Ad_Rect(
-		getGridSize() * POSITIONS[i] - (STAR_SIZE/2), 
-		getGridSize() * POSITIONS[k] - (STAR_SIZE/2), 
-		STAR_SIZE, STAR_SIZE
-	    ));
+		for (int k=0; k<3; k++) {
+			Ad_GameNode_p star = make_shared<Ad_GameNode>(Ad_Rect(
+			getGridSize() * POSITIONS[i] - (STAR_SIZE/2), 
+			getGridSize() * POSITIONS[k] - (STAR_SIZE/2), 
+			STAR_SIZE, STAR_SIZE
+			));
 
-	    star->set_bitmap(ad_create_circle_bitmap(STAR_SIZE, DARK_COLOR));
-	    grid->add_child(star);
-	}
+			star->set_bitmap(ad_create_circle_bitmap(STAR_SIZE, DARK_COLOR));
+			grid->add_child(star);
+		}
     }
 }
 
@@ -100,28 +100,28 @@ void Goban::renderLabels() {
     const unsigned GRID_OFF = (getBoardSize() - getGridSize())/2;
 
     for (unsigned i=0; i<size; i++) {
-	auto x = node->get_bounds().get_pos().x + GRID_OFF + (getGridSize()/(size-1) * i);
-	auto y = node->get_bounds().get_pos().y + 4;
-	al_draw_text(font, DARK_COLOR, x, y, ALLEGRO_ALIGN_CENTRE, string(1, 'A' + i).c_str());
+		auto x = node->get_bounds().get_pos().x + GRID_OFF + (getGridSize()/(size-1) * i);
+		auto y = node->get_bounds().get_pos().y + 4;
+		al_draw_text(font, DARK_COLOR, x, y, ALLEGRO_ALIGN_CENTRE, string(1, 'A' + i).c_str());
     }
 
     for (unsigned i=0; i<size; i++) {
-	auto x = node->get_bounds().get_pos().x + GRID_OFF + (getGridSize()/(size-1) * i);
-	auto y = node->get_bounds().get_pos().y + 2 * GRID_OFF + getGridSize() - 20;
-	al_draw_text(font, DARK_COLOR, x, y, ALLEGRO_ALIGN_CENTRE, string(1, 'A' + i).c_str());
+		auto x = node->get_bounds().get_pos().x + GRID_OFF + (getGridSize()/(size-1) * i);
+		auto y = node->get_bounds().get_pos().y + 2 * GRID_OFF + getGridSize() - 20;
+		al_draw_text(font, DARK_COLOR, x, y, ALLEGRO_ALIGN_CENTRE, string(1, 'A' + i).c_str());
     }
 
     for (unsigned i=0; i<size; i++) {
-	int pos = size - i;
-	auto x = node->get_bounds().get_pos().x + 4;
-	auto y = node->get_bounds().get_pos().y + GRID_OFF + (getGridSize()/(size-1) * i) - 6;
-	al_draw_text(font, DARK_COLOR, x, y, ALLEGRO_ALIGN_LEFT, to_string(pos).c_str());
+		int pos = size - i;
+		auto x = node->get_bounds().get_pos().x + 4;
+		auto y = node->get_bounds().get_pos().y + GRID_OFF + (getGridSize()/(size-1) * i) - 6;
+		al_draw_text(font, DARK_COLOR, x, y, ALLEGRO_ALIGN_LEFT, to_string(pos).c_str());
     }
 
     for (unsigned i=0; i<size; i++) {
-	int pos = size - i;
-	auto x = node->get_bounds().get_pos().x + 2 * GRID_OFF + getGridSize() - 6;
-	auto y = node->get_bounds().get_pos().y + GRID_OFF + (getGridSize()/(size-1) * i) - 6;
-	al_draw_text(font, DARK_COLOR, x, y, ALLEGRO_ALIGN_RIGHT, to_string(pos).c_str());
+		int pos = size - i;
+		auto x = node->get_bounds().get_pos().x + 2 * GRID_OFF + getGridSize() - 6;
+		auto y = node->get_bounds().get_pos().y + GRID_OFF + (getGridSize()/(size-1) * i) - 6;
+		al_draw_text(font, DARK_COLOR, x, y, ALLEGRO_ALIGN_RIGHT, to_string(pos).c_str());
     }
 }
