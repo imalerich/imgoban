@@ -2,13 +2,14 @@
 -----------------------------------------------------------------------------------------
 
 Go playing software with GTP support.
-_
-![alt tag](https://raw.githubusercontent.com/imalerich/imgoban/master/scrot/19x19.png)
 
-![alt tag](https://raw.githubusercontent.com/imalerich/imgoban/master/scrot/9x9.png)
+![alt tag](https://raw.githubusercontent.com/imalerich/imgoban/master/scrot/19x19.png)
 
 # Dependencies
 -----------------------------------------------------------------------------------------
+
+- [adelie2d](https://github.com/imalerich/adelie2d)
+- [imgtp](https://github.com/imalerich/imgtp)
 
 # Documentation
 -----------------------------------------------------------------------------------------
