@@ -55,7 +55,7 @@ void Goban::addToScene() {
     scene->get_root()->add_child(node);
 
     addGridToBoard();
-    // addStarsToBoard();
+    addStarsToBoard();
 
     if (!(font = al_load_ttf_font("../fonts/OpenSans-Regular.ttf", 12, 0))) {
 		cerr << "Failed to load board font at: ../fonts/OpenSans-Regular.ttf" << endl;

@@ -22,7 +22,7 @@ int main(int argc, const char ** argv) {
     }
 
     scene = make_shared<Ad_Scene>(SCREEN_W, SCREEN_H);
-    g = make_shared<Game>(scene, 9);
+    g = make_shared<Game>(scene, 19);
 
     ad_set_frame_rate(SHIT);
     return ad_run(update, render);
