@@ -12,6 +12,8 @@ using namespace std;
 #include "constants.h"
 #include "state.h"
 
+enum class GameState { Playing, Scoring, Over };
+
 class Game;
 typedef shared_ptr<Game> Game_p;
 
@@ -69,31 +71,33 @@ public:
      * Else, NOPLAYER, SLATE, or SHELL will be returned.
      */
     inline unsigned get_stone(unsigned X, unsigned Y) {
-	if (X < 0 || Y < 0 || X >= size || Y >= size) {
-	    return INVALID;
-	}
+		if (X < 0 || Y < 0 || X >= size || Y >= size) {
+			return INVALID;
+		}
 
-	return state[X + Y * size];
+		return state[X + Y * size];
     }
 
     operator std::string() const { 
-	string out = "";
-	for (unsigned i=0; i<2*size-1; i++) { out += "_"; }
-	for (unsigned i=0; i<(size * size); i++) {
-	    if (i % size == 0) { out += "\n"; }
-	    if (state[i] == NOPLAYER) { out += ". "; }
-	    if (state[i] == SLATE) { out += "x "; }
-	    if (state[i] == SHELL) { out += "o "; }
-	}
+		string out = "";
+		for (unsigned i=0; i<2*size-1; i++) { out += "_"; }
 
-	out += "\n";
-	for (unsigned i=0; i<2*size-1; i++) { out += "-"; }
-	return out;
+		for (unsigned i=0; i<(size * size); i++) {
+			if (i % size == 0) { out += "\n"; }
+			if (state[i] == NOPLAYER) { out += ". "; }
+			if (state[i] == SLATE) { out += "x "; }
+			if (state[i] == SHELL) { out += "o "; }
+		}
+
+		out += "\n";
+		for (unsigned i=0; i<2*size-1; i++) { out += "-"; }
+		return out;
     }
 
 private:
     const unsigned size;
     const Ad_Scene_p scene;
+	GameState game_state;
 
     Goban_p board;
     Move_p root_move;
@@ -182,6 +186,14 @@ private:
      * move to the move tree.
      */
     void swap_turn();
+
+	/**
+	 * \fn void check_and_update_state();
+	 * Checks if the current game_state should move
+	 * between playing, scoring, and game over.
+	 * If a change is necessary, the game_state value will be updated.
+	 */
+	void check_and_update_state();
 };
 
 #endif

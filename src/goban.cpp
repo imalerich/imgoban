@@ -47,15 +47,15 @@ void Goban::addToScene() {
 
     Ad_GameNode_p bottom = make_shared<Ad_GameNode>(Ad_Rect(offset, BOARD_SIZE + BOARD_PADDING/2, 
 	BOARD_SIZE, BOARD_DEPTH));
-    bottom->set_bitmap(ad_create_rect_bitmap(Ad_Vector2(BOARD_SIZE, BOARD_DEPTH), DARK_COLOR));
+    bottom->set_sprite_bitmap(ad_create_rect_bitmap(Ad_Vector2(BOARD_SIZE, BOARD_DEPTH), DARK_COLOR));
     scene->get_root()->add_child(bottom);
 
     node = make_shared<Ad_GameNode>(Ad_Rect(offset, BOARD_PADDING/2, BOARD_SIZE, BOARD_SIZE));
-    node->set_bitmap(ad_create_rect_bitmap(Ad_Vector2(BOARD_SIZE, BOARD_SIZE), LIGHT_COLOR));
+    node->set_sprite_bitmap(ad_create_rect_bitmap(Ad_Vector2(BOARD_SIZE, BOARD_SIZE), LIGHT_COLOR));
     scene->get_root()->add_child(node);
 
     addGridToBoard();
-    addStarsToBoard();
+    // addStarsToBoard();
 
     if (!(font = al_load_ttf_font("../fonts/OpenSans-Regular.ttf", 12, 0))) {
 		cerr << "Failed to load board font at: ../fonts/OpenSans-Regular.ttf" << endl;
@@ -70,7 +70,7 @@ void Goban::addGridToBoard() {
     const unsigned GRID_SIZE = size + (size-1) * GAP;
     const unsigned GRID_OFF = (BOARD_SIZE - GRID_SIZE)/2;
     grid = make_shared<Ad_GameNode>(Ad_Rect(GRID_OFF, GRID_OFF, GRID_SIZE, GRID_SIZE));
-    grid->set_bitmap(ad_create_grid_bitmap(Ad_Vector2(GRID_SIZE, GRID_SIZE), 
+    grid->set_sprite_bitmap(ad_create_grid_bitmap(Ad_Vector2(GRID_SIZE, GRID_SIZE), 
 	Ad_Vector2(size, size), 1, DARK_COLOR));
     node->add_child(grid);
 }
@@ -86,7 +86,7 @@ void Goban::addStarsToBoard() {
 			STAR_SIZE, STAR_SIZE
 			));
 
-			star->set_bitmap(ad_create_circle_bitmap(STAR_SIZE, DARK_COLOR));
+			star->set_sprite_bitmap(ad_create_circle_bitmap(STAR_SIZE, DARK_COLOR));
 			grid->add_child(star);
 		}
     }

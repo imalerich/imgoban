@@ -7,8 +7,8 @@
 
 #define SHIT 30
 
-unsigned SCREEN_W = 1920;
-unsigned SCREEN_H = 1080;
+unsigned SCREEN_W = 1366;
+unsigned SCREEN_H = 768;
 Ad_Scene_p scene;
 Game_p g;
 
@@ -22,7 +22,7 @@ int main(int argc, const char ** argv) {
     }
 
     scene = make_shared<Ad_Scene>(SCREEN_W, SCREEN_H);
-    g = make_shared<Game>(scene, 19);
+    g = make_shared<Game>(scene, 9);
 
     ad_set_frame_rate(SHIT);
     return ad_run(update, render);

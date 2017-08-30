@@ -82,7 +82,9 @@ public:
      * \fn inline bool is_captured() { return !is_on_board(); }
      * \brief A stone is considered captured iff it is not on the board.
      */
-    inline bool is_captured() { return !is_on_board(); }
+    const inline bool is_captured() { return !is_on_board(); }
+
+	const inline bool is_pass() { return type == MoveType::Pass; }
     
     // meta data
     Move_w parent; /** Parent Move.*/

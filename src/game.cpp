@@ -13,6 +13,7 @@ Game::Game(Ad_Scene_p Scene, unsigned BoardSize)
     current_move = nullptr;
 	move_indicator = nullptr;
     current_player = SLATE;
+	game_state = GameState::Playing;
 
     // Initialize an empty board.
     state = unique_ptr<char[]>(new char[size * size]);
@@ -20,22 +21,52 @@ Game::Game(Ad_Scene_p Scene, unsigned BoardSize)
 }
 
 void Game::update() {
-	if (current_player == SLATE) {
-		if (ad_is_button_released(0)) {
-			int x = round((size-1) * (ad_get_mouse_x() - board->grid->get_absolute_pos().x) / board->getGridSize());
-			int y = round((size-1) * (ad_get_mouse_y() - board->grid->get_absolute_pos().y) / board->getGridSize());
-			add_stone(x, y);
+	if (game_state == GameState::Playing) {
+		if (current_player == SLATE) {
+			// ask the engine to make a move, then add it to the board
+			gtp::Vertex v = engine_controller->gen_move(gtp::PLAYER_BLACK);
+			if (!v.is_pass()) {
+				add_stone(v.get_x(), v.get_y());
+			} else {
+				pass();
+			}
 
-		} else if (ad_is_button_released(3)) {
-			pass();
+			// if (ad_is_button_released(0)) {
+			// 	int x = round((size-1) * (ad_get_mouse_x() - board->grid->get_absolute_pos().x) / board->getGridSize());
+			// 	int y = round((size-1) * (ad_get_mouse_y() - board->grid->get_absolute_pos().y) / board->getGridSize());
+			// 	add_stone(x, y);
+
+			// } else if (ad_is_button_released(3)) {
+			// 	pass();
+			// }
+		} else {
+			// ask the engine to make a move, then add it to the board
+			gtp::Vertex v = engine_controller->gen_move(gtp::PLAYER_WHITE);
+			if (!v.is_pass()) {
+				add_stone(v.get_x(), v.get_y());
+			} else {
+				pass();
+			}
 		}
-	} else {
-		// ask the engine to make a move, then add it to the board
-		gtp::Vertex v = engine_controller->gen_move(gtp::PLAYER_WHITE);
-		add_stone(v.get_x(), v.get_y());
 	}
 
 	create_update_move_indicator();
+	check_and_update_state();
+}
+
+void Game::check_and_update_state() {
+	if (game_state == GameState::Playing) {
+		// if we have two passes in a row
+		// then both players are done playing
+		// proceed into scoring the game
+		if (current_move->is_pass() && !current_move->parent.expired() &&
+				current_move->parent.lock()->is_pass()) {
+			game_state = GameState::Scoring;
+		}
+
+	} else if (game_state == GameState::Scoring) {
+		// TODO
+	}
 }
 
 void Game::render() {
@@ -90,6 +121,16 @@ void Game::create_update_move_indicator() {
 	// no current move, no move indicator, nothing to do
 	if (!current_move && !move_indicator) { return; }
 
+	// current move is a pass, remove the indicator if necessary and return
+	if (current_move && current_move->is_pass()) {
+		if (move_indicator) {
+			move_indicator->remove_from_parent();
+			move_indicator = nullptr;
+		}
+
+		return;
+	}
+
 	// no current move, but indicator exists, remove it
 	if (!current_move && move_indicator) {
 		move_indicator->remove_from_parent();
@@ -105,7 +146,7 @@ void Game::create_update_move_indicator() {
 	if (current_move && !move_indicator) {
 		move_indicator = make_shared<Ad_GameNode>(Ad_Rect(
 			0, 0, SIZE, SIZE), 5);
-		move_indicator->set_bitmap(ad_create_rect_bitmap(Ad_Vector2(SIZE, SIZE), INDICATOR_COLOR));
+		move_indicator->set_sprite_bitmap(ad_create_rect_bitmap(Ad_Vector2(SIZE, SIZE), INDICATOR_COLOR));
 		board->node->add_child(move_indicator);
 	}
 
