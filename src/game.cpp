@@ -3,8 +3,8 @@
 
 #include "game.h"
 
-Game::Game(Ad_Scene_p Scene, unsigned BoardSize) 
-	: size{BoardSize}, scene{Scene} {
+Game::Game(Ad_Scene_p Scene, unsigned BoardSize, float Komi) 
+	: size{BoardSize}, komi{Komi}, scene{Scene} {
 
     board = make_shared<Goban>(scene, BoardSize);
     root_move = nullptr;

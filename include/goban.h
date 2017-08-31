@@ -18,13 +18,13 @@ public:
     void renderLabels();
 
     inline unsigned getGridSize() {
-	// the grid size is square, so just use the x component
-	return grid->get_bounds().get_size().x;
+		// the grid size is square, so just use the x component
+		return grid->get_bounds().get_size().x;
     }
 
     inline unsigned getBoardSize() {
-	// the board size is square, so just use the x component
-	return node->get_bounds().get_size().x;
+		// the board size is square, so just use the x component
+		return node->get_bounds().get_size().x;
     }
 
     /**

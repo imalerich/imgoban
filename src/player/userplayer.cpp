@@ -1,15 +1,33 @@
+#include <adelie2d/adelie.h>
+#include <cmath>
+
 #include "player/userplayer.h"
 
-void UserPlayer::move_played(Move_p move) {
-	// TODO - inform the gtp engine of the move
-}
+UserPlayer::UserPlayer(Goban_p Goban, unsigned BoardSize) 
+	: board{Goban}, size{BoardSize} { }
 
 Move_p UserPlayer::gen_move(unsigned color) {
-	// TODO - generate a new move by the engine
+	// generate a move when a mouse button is released
+	if (ad_is_button_released(0)) {
+		int x = round((size-1) * (ad_get_mouse_x() - board->grid->get_absolute_pos().x) 
+				/ board->getGridSize());
+		int y = round((size-1) * (ad_get_mouse_y() - board->grid->get_absolute_pos().y) 
+				/ board->getGridSize());
+		return make_shared<Move>(x, y, color, MoveType::Stone);
+	}
+
+	// else no move is ready
 	return nullptr;
 }
 
 Move_p UserPlayer::consider_move(unsigned color) {
-	// TODO - base it off the current mouse position
-	return nullptr;
+	// This is not the actual move we are going to play,
+	// but it is where the users mouse is currently located at.
+	// Have the UI display a semi-transparent stone at this location
+	// if that location is available.
+	int x = round((size-1) * (ad_get_mouse_x() - board->grid->get_absolute_pos().x) 
+			/ board->getGridSize());
+	int y = round((size-1) * (ad_get_mouse_y() - board->grid->get_absolute_pos().y) 
+			/ board->getGridSize());
+	return make_shared<Move>(x, y, color, MoveType::Stone);
 }

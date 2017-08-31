@@ -17,7 +17,7 @@ public:
 	 * However for gtp/remote players, they will need
 	 * to know about stones local users make.
 	 */
-	virtual void move_played(Move_p move) = 0;
+	virtual void move_played(Move_p move) { };
 
 	/**
 	 * \fn virtual Move_p gen_move(unsigned Player);

@@ -19,9 +19,7 @@ void State::encode(const char * data) {
 	// convert a row of data into a single trinary number
 	for (unsigned k=0; k<size; k++) {
 	    state[i] += data[i + k*size] * pow(3, k);
-	}
-    }
-}
+}}}
 
 bool State::operator==(const State &other) {
     // both boards need to be of the same size
@@ -29,10 +27,9 @@ bool State::operator==(const State &other) {
 
     // compare each row (stored as a single number)
     for (unsigned i=0; i<size; i++) {
-	if (other.state[i] != state[i]) {
-	    return false;
-	}
-    }
+		if (other.state[i] != state[i]) {
+			return false;
+	}}
 
     return true;
 }

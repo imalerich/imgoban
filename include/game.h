@@ -20,7 +20,7 @@ typedef shared_ptr<Game> Game_p;
 
 class Game {
 public:
-    Game(Ad_Scene_p Scene, unsigned BoardSize);
+    Game(Ad_Scene_p Scene, unsigned BoardSize, float Komi);
 
 	/**
 	 * \fn void attach_player(Player_p player, unsigned color);
@@ -106,6 +106,10 @@ public:
 
 	// the size of the board for this game
     const unsigned size;
+	// komi (given to white) for this game
+	const float komi;
+	// game board storing most of the scene information
+    Goban_p board;
 
 private:
     const Ad_Scene_p scene;
@@ -113,8 +117,6 @@ private:
 
 	// interrfaces to players who we can ask for moves
 	Player_p players[2];
-
-    Goban_p board;
     Move_p root_move;
     Move_p current_move;
 
