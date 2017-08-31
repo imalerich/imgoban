@@ -21,6 +21,9 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 # Build the binary
 
 add_executable(imGoban
+    src/player/roboplayer.cpp
+    src/player/userplayer.cpp
+
     src/game.cpp
     src/move.cpp
     src/goban.cpp

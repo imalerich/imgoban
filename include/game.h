@@ -7,6 +7,7 @@
 
 using namespace std;
 
+#include "player/player.h"
 #include "move.h"
 #include "goban.h"
 #include "constants.h"
@@ -99,9 +100,15 @@ private:
     const Ad_Scene_p scene;
 	GameState game_state;
 
+	// interrfaces to players who we can ask for moves
+	Player_p players[2];
+
     Goban_p board;
     Move_p root_move;
     Move_p current_move;
+
+	// who's turn is it to play?
+    unsigned current_player;
 
 	// indicates the position of the most recently played move
 	Ad_GameNode_p move_indicator;
@@ -113,10 +120,6 @@ private:
 	 * stone.
 	 */
 	void create_update_move_indicator();
-
-	// this is our interface to the current go engine
-	gtp::Controller_p engine_controller;
-    unsigned current_player;
 
     /**
      * \fn inline void set_stone(unsigned X, unsigend Y) {

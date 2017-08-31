@@ -1,19 +1,22 @@
 #include <cmath>
 #include <memory>
 
+#include "player/roboplayer.h"
+#include "player/userplayer.h"
 #include "game.h"
 
 Game::Game(Ad_Scene_p Scene, unsigned BoardSize) 
 	: size{BoardSize}, scene{Scene} {
 
     board = make_shared<Goban>(scene, BoardSize);
-	engine_controller = make_shared<gtp::Controller>(BoardSize, 6.5f);
-	engine_controller->attach_engine("");
     root_move = nullptr;
     current_move = nullptr;
 	move_indicator = nullptr;
     current_player = SLATE;
 	game_state = GameState::Playing;
+
+	players[0] = make_shared<RoboPlayer>(BoardSize, 6.5f);
+	players[1] = make_shared<RoboPlayer>(BoardSize, 6.5f);
 
     // Initialize an empty board.
     state = unique_ptr<char[]>(new char[size * size]);
@@ -22,33 +25,18 @@ Game::Game(Ad_Scene_p Scene, unsigned BoardSize)
 
 void Game::update() {
 	if (game_state == GameState::Playing) {
-		if (current_player == SLATE) {
-			// ask the engine to make a move, then add it to the board
-			gtp::Vertex v = engine_controller->gen_move(gtp::PLAYER_BLACK);
-			if (!v.is_pass()) {
-				add_stone(v.get_x(), v.get_y());
-			} else {
-				pass();
-			}
+		unsigned c = (current_player+1) % 2;
+		unsigned n = (current_player+2) % 2;
 
-			// if (ad_is_button_released(0)) {
-			// 	int x = round((size-1) * (ad_get_mouse_x() - board->grid->get_absolute_pos().x) / board->getGridSize());
-			// 	int y = round((size-1) * (ad_get_mouse_y() - board->grid->get_absolute_pos().y) / board->getGridSize());
-			// 	add_stone(x, y);
-
-			// } else if (ad_is_button_released(3)) {
-			// 	pass();
-			// }
-		} else {
-			// ask the engine to make a move, then add it to the board
-			gtp::Vertex v = engine_controller->gen_move(gtp::PLAYER_WHITE);
-			if (!v.is_pass()) {
-				add_stone(v.get_x(), v.get_y());
-			} else {
-				pass();
+		Move_p move = players[c]->gen_move(current_player);
+		if (move && !move->is_pass()) {
+			if (add_stone(move->x, move->y)) {
+				players[n]->move_played(current_move);
 			}
-		}
-	}
+		} else if (move && move->is_pass()) {
+			pass();
+			players[n]->move_played(current_move);
+	}}
 
 	create_update_move_indicator();
 	check_and_update_state();
@@ -106,13 +94,6 @@ bool Game::add_stone(unsigned X, unsigned Y) {
     }}}
 
     cout << (string)(*this) << endl << endl;
-
-	// let the controller know we made a move
-	// TODO - refactor this implementation
-	if (current_player == SLATE) {
-		engine_controller->play_move(X, Y, gtp::PLAYER_BLACK);
-	}
-    
     swap_turn();
     return true;
 }
@@ -159,7 +140,13 @@ void Game::create_update_move_indicator() {
 
 void Game::pass() {
     cout << (current_player == SLATE ? "black" : "white") << " passes" << endl << endl;
-    current_move = current_move->add_child(make_shared<Move>(current_player, MoveType::Pass));
+	if (!root_move) {
+		root_move = make_shared<Move>(current_player, MoveType::Pass);
+		current_move = root_move;
+	} else {
+		current_move = current_move->add_child(make_shared<Move>(current_player, MoveType::Pass));
+	}
+
     swap_turn();
 }
 
