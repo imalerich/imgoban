@@ -1,8 +1,6 @@
 #include <cmath>
 #include <memory>
 
-#include "player/roboplayer.h"
-#include "player/userplayer.h"
 #include "game.h"
 
 Game::Game(Ad_Scene_p Scene, unsigned BoardSize) 
@@ -13,20 +11,30 @@ Game::Game(Ad_Scene_p Scene, unsigned BoardSize)
     current_move = nullptr;
 	move_indicator = nullptr;
     current_player = SLATE;
-	game_state = GameState::Playing;
+	game_state = GameState::Lobby;
 
-	players[0] = make_shared<RoboPlayer>(BoardSize, 6.5f);
-	players[1] = make_shared<RoboPlayer>(BoardSize, 6.5f);
+	players[0] = nullptr;
+	players[1] = nullptr;
 
     // Initialize an empty board.
     state = unique_ptr<char[]>(new char[size * size]);
     for (unsigned i=0; i<(size*size); i++) { state[i] = NOPLAYER; }
 }
 
+void Game::attach_player(Player_p player, unsigned color) {
+	const unsigned c = (color+1) % 2;
+	players[c] = player;
+}
+
 void Game::update() {
+	// if we don't have two players attached yet, don't do anything
+	if (!players[0] && !players[1]) { return; }
+	// once we have two players assigned, leave the lobby and start playing
+	if (game_state == GameState::Lobby) { game_state = GameState::Playing; }
+
 	if (game_state == GameState::Playing) {
-		unsigned c = (current_player+1) % 2;
-		unsigned n = (current_player+2) % 2;
+		const unsigned c = (current_player+1) % 2;
+		const unsigned n = (current_player+2) % 2;
 
 		Move_p move = players[c]->gen_move(current_player);
 		if (move && !move->is_pass()) {

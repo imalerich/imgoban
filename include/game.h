@@ -13,7 +13,7 @@ using namespace std;
 #include "constants.h"
 #include "state.h"
 
-enum class GameState { Playing, Scoring, Over };
+enum class GameState { Lobby, Playing, Scoring, Over };
 
 class Game;
 typedef shared_ptr<Game> Game_p;
@@ -21,6 +21,15 @@ typedef shared_ptr<Game> Game_p;
 class Game {
 public:
     Game(Ad_Scene_p Scene, unsigned BoardSize);
+
+	/**
+	 * \fn void attach_player(Player_p player, unsigned color);
+	 * Attaches the input player to the stone of the input color.
+	 * Once a player is attached for black and white, the game will begin.
+	 * If a game has already started, this will not reset the game, but it 
+	 * will start asking the new player for moves on behalf of 'color'.
+	 */
+	void attach_player(Player_p player, unsigned color);
 
     /**
      * \fn void add_stone(unsigned X, unsigned Y);
@@ -95,8 +104,10 @@ public:
 		return out;
     }
 
-private:
+	// the size of the board for this game
     const unsigned size;
+
+private:
     const Ad_Scene_p scene;
 	GameState game_state;
 

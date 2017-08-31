@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <adelie2d/adelie.h>
 
+#include "player/roboplayer.h"
+#include "player/userplayer.h"
 #include "constants.h"
 #include "game.h"
 
@@ -23,6 +25,10 @@ int main(int argc, const char ** argv) {
 
     scene = make_shared<Ad_Scene>(SCREEN_W, SCREEN_H);
     g = make_shared<Game>(scene, 19);
+
+	// attach to bots to play against each other
+	g->attach_player(make_shared<RoboPlayer>(g->size, 6.5f), SLATE);
+	g->attach_player(make_shared<RoboPlayer>(g->size, 6.5f), SHELL);
 
     ad_set_frame_rate(SHIT);
     return ad_run(update, render);
