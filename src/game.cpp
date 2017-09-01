@@ -60,7 +60,8 @@ void Game::update() {
 		} else if (move && move->is_pass()) {
 			pass();
 			players[n]->move_played(current_move);
-	}}
+		}
+	}
 
 	create_update_move_indicator();
 	check_and_update_state();
