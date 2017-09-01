@@ -25,12 +25,12 @@ void Goban::add_graphics_for_stone(Move_p stone, const unsigned current_player) 
     );
 
     // now that we have the move, we need to add it to our scene
-    stone->shadow = make_shared<Ad_GameNode>("../img/shadow.png", Ad_Rect(
+    stone->shadow = make_shared<Ad_GameNode>(SHADOW_IMG, Ad_Rect(
 		bounds.get_pos().x - OFF, bounds.get_pos().y - OFF * 0.3,
 		bounds.get_size().x + 2 * OFF, bounds.get_size().y + 2 * OFF
     ), 1);
 
-    const char * img = (current_player == SLATE) ? "../img/slate.png" : "../img/shell.png";
+    const char * img = (current_player == SLATE) ? SLATE_IMG : SHELL_IMG;
     stone->stone = make_shared<Ad_GameNode>(img, bounds, 2);
 
     // add the game nodes to the scene to be rendered

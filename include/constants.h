@@ -25,4 +25,10 @@ extern unsigned SCREEN_H;
 #define SHELL_CHECKED 5
 #define INVALID UINT_MAX
 
+#define SLATE_IMG		"../img/slate.png"
+#define SHELL_IMG		"../img/shell.png"
+#define SHADOW_IMG		"../img/shadow.png"
+#define SLATE_PREV_IMG	"../img/slate_preview.png"
+#define SHELL_PREV_IMG	"../img/shell_preview.png"
+
 #endif

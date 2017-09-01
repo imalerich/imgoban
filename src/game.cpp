@@ -16,7 +16,7 @@ Game::Game(Ad_Scene_p Scene, unsigned BoardSize, float Komi)
 	players[0] = nullptr;
 	players[1] = nullptr;
 
-	preview_indicator = make_shared<Ad_GameNode>("../img/shell_preview.png", Ad_Rect(
+	preview_indicator = make_shared<Ad_GameNode>(SLATE_PREV_IMG, Ad_Rect(
 		0, 0, board->getStoneSize(), board->getStoneSize()
 	), 5);
 	board->node->add_child(preview_indicator);
@@ -46,7 +46,7 @@ void Game::update() {
 		Move_p p = players[c]->consider_move(current_player);
 		if (p && get_stone(p->x, p->y) == NOPLAYER) {
 			const char * img = (current_player == SLATE) ? 
-				"../img/slate_preview.png" : "../img/shell_preview.png";
+				SLATE_PREV_IMG : SHELL_PREV_IMG;
 			preview_indicator->load_sprite(img);
 			preview_indicator->hidden = false;
 			preview_indicator->set_pos(board->grid_coords_for_pos(p->x, p->y));
