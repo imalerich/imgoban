@@ -14,6 +14,8 @@ Move_p UserPlayer::gen_move(unsigned color) {
 		int y = round((size-1) * (ad_get_mouse_y() - board->grid->get_absolute_pos().y) 
 				/ board->getGridSize());
 		return make_shared<Move>(x, y, color, MoveType::Stone);
+	} else if (ad_is_button_released(1)) {
+		return make_shared<Move>(color, MoveType::Pass);
 	}
 
 	// else no move is ready

@@ -61,6 +61,16 @@ void Game::update() {
 			pass();
 			players[n]->move_played(current_move);
 		}
+	} else if (game_state == GameState::Scoring) {
+		// TODO - clean up
+		if (ad_is_button_released(0)) {
+			// get the coordinates of a stone in the group we wish to kill
+			int x = round((size-1) * (ad_get_mouse_x() - board->grid->get_absolute_pos().x) 
+					/ board->getGridSize());
+			int y = round((size-1) * (ad_get_mouse_y() - board->grid->get_absolute_pos().y) 
+					/ board->getGridSize());
+			toggle_dead(x, y);
+		}
 	}
 
 	create_update_move_indicator();
@@ -304,6 +314,46 @@ void Game::remove_group(unsigned X, unsigned Y, Move_p killer) {
 			// we don't need to check these stones
 			if (abs(x) == abs(y)) { continue; }
 			if (get_stone(X+x, Y+y) == remove_for) { remove_group(X+x, Y+y, killer); }
+    }}
+}
+
+void Game::toggle_dead(unsigned X, unsigned Y) {
+	// make sure we have a valid stone that can be marked as dead
+	unsigned remove_for = get_stone(X, Y);
+	if (remove_for != SLATE 
+		&& remove_for != SHELL
+		&& remove_for != SLATE_DEAD
+		&& remove_for != SHELL_DEAD) { return; }
+
+	// if the stone is already dead, we need to set it to alive
+	bool dead = remove_for == SLATE_DEAD || remove_for == SHELL_DEAD;
+
+	// get the reference to the move
+	Move_p m = current_move->find_stone(X, Y);
+	if (!m) {
+		cerr << "Could not find valid stone in move hierarchy!" << endl;
+		exit(1);
+		return;
+	}
+
+	// make the stone transparent and update the current state
+	// we should also hide the shadow, would look weird with a transparent stone
+	if (!dead) {
+		m->shadow->hidden = true;
+		m->stone->load_sprite((remove_for == SLATE) ? SLATE_PREV_IMG : SHELL_PREV_IMG);
+		set_stone(X, Y, (remove_for == SLATE) ? SLATE_DEAD : SHELL_DEAD);
+	} else {
+		m->shadow->hidden = false;
+		m->stone->load_sprite((remove_for == SLATE_DEAD) ? SLATE_IMG : SHELL_IMG);
+		set_stone(X, Y, (remove_for == SLATE_DEAD) ? SLATE : SHELL);
+	}
+
+    // recurse to adjacent stones (of the current players)
+    for (int x=-1; x<=1; x++) {
+		for (int y=-1; y<=1; y++) {
+			// we don't need to check these stones
+			if (abs(x) == abs(y)) { continue; }
+			if (get_stone(X+x, Y+y) == remove_for) { toggle_dead(X+x, Y+y); }
     }}
 }
 

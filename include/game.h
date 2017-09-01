@@ -193,6 +193,14 @@ private:
      */
     void remove_group(unsigned X, unsigned Y, Move_p killer);
 
+	/**
+	 * \fn void toggle_dead(unsigned X, unsigned Y, unsigned color);
+	 * Marks the given stone, and all stone in that stones group as dead.
+	 * This will change their value in the board state, as well as updating
+	 * the UI to display transparent stones instead of solid ones.
+	 */
+	void toggle_dead(unsigned X, unsigned Y);
+
     /**
      * \fn bool is_move_unique(unsigned X, unsigned Y, unsigned Player);
      * \brief If the given stone is added to the board, will it create a unique
