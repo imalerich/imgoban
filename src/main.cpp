@@ -27,7 +27,9 @@ int main(int argc, const char ** argv) {
     g = make_shared<Game>(scene, 9, 6.5f);
 
 	// attach to bots to play against each other
-	g->attach_player(make_shared<RoboPlayer>(g->size, g->komi), SLATE);
+	// g->attach_player(make_shared<RoboPlayer>(g->size, g->komi), SHELL);
+	// g->attach_player(make_shared<RoboPlayer>(g->size, g->komi), SLATE);
+	g->attach_player(make_shared<UserPlayer>(g->board, g->size), SLATE);
 	g->attach_player(make_shared<UserPlayer>(g->board, g->size), SHELL);
 
     ad_set_frame_rate(SHIT);

@@ -38,6 +38,16 @@ void Goban::add_graphics_for_stone(Move_p stone, const unsigned current_player) 
     node->add_child(stone->stone);
 }
 
+Ad_Vector2 Goban::grid_coords_for_pos(unsigned x, unsigned y) {
+    const unsigned GRID_OFF = (getBoardSize() - getGridSize())/2;
+    const unsigned SPACING = getGridSize()/(size-1);
+    const unsigned SIZE = SPACING * 0.95;
+
+	return Ad_Vector2(
+		GRID_OFF + SPACING * x - SIZE/2,
+		GRID_OFF + SPACING * y - SIZE/2);
+}
+
 /* ---------------------------------------------------------------------------------------------
  * Create the scene which we will use to render the board.
  * --------------------------------------------------------------------------------------------- */

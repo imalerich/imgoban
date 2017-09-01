@@ -16,6 +16,12 @@ Game::Game(Ad_Scene_p Scene, unsigned BoardSize, float Komi)
 	players[0] = nullptr;
 	players[1] = nullptr;
 
+	preview_indicator = make_shared<Ad_GameNode>("../img/shell_preview.png", Ad_Rect(
+		0, 0, board->getStoneSize(), board->getStoneSize()
+	), 5);
+	board->node->add_child(preview_indicator);
+	preview_indicator->hidden = true;
+
     // Initialize an empty board.
     state = unique_ptr<char[]>(new char[size * size]);
     for (unsigned i=0; i<(size*size); i++) { state[i] = NOPLAYER; }
@@ -36,6 +42,16 @@ void Game::update() {
 		const unsigned c = (current_player+1) % 2;
 		const unsigned n = (current_player+2) % 2;
 
+		// check if we should render the preview indicator
+		Move_p p = players[c]->consider_move(current_player);
+		if (p && get_stone(p->x, p->y) == NOPLAYER) {
+			const char * img = (current_player == SLATE) ? 
+				"../img/slate_preview.png" : "../img/shell_preview.png";
+			preview_indicator->load_sprite(img);
+			preview_indicator->hidden = false;
+			preview_indicator->set_pos(board->grid_coords_for_pos(p->x, p->y));
+		} else { preview_indicator->hidden = true; }
+
 		Move_p move = players[c]->gen_move(current_player);
 		if (move && !move->is_pass()) {
 			if (add_stone(move->x, move->y)) {
@@ -55,7 +71,9 @@ void Game::check_and_update_state() {
 		// if we have two passes in a row
 		// then both players are done playing
 		// proceed into scoring the game
-		if (current_move->is_pass() && !current_move->parent.expired() &&
+		if (current_move &&
+				current_move->is_pass() && 
+				!current_move->parent.expired() &&
 				current_move->parent.lock()->is_pass()) {
 			game_state = GameState::Scoring;
 		}

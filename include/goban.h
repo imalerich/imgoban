@@ -27,6 +27,18 @@ public:
 		return node->get_bounds().get_size().x;
     }
 
+	inline unsigned getStoneSize() {
+		// stone size is square, only need one component
+		return 0.95f * getGridSize()/(size-1);
+	}
+
+	/**
+	 * \fn Ad_Vector2 grid_coords_for_pos(unsigned x, unsigned y);
+	 * Converts the input board coordinates into a stones position
+	 * relative to the grid.
+	 */
+	Ad_Vector2 grid_coords_for_pos(unsigned x, unsigned y);
+
     /**
      * \fn void add_graphics_for_stone(Move * stone);
      * \brief Given a valid move of type stone with positional information,

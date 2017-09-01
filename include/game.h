@@ -126,6 +126,12 @@ private:
 	// indicates the position of the most recently played move
 	Ad_GameNode_p move_indicator;
 
+	// provides a preview of the position where the user
+	// is thinking about making a move, if the player
+	// does not respond with a valid position
+	// this gamenode will simply be hidden
+	Ad_GameNode_p preview_indicator;
+
 	/**
 	 * \fn void create_update_move_indicator();
 	 * \brief Creates the move indicator if it does not exist,
