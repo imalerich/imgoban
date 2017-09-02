@@ -87,6 +87,7 @@ void Game::check_and_update_state() {
 				!current_move->parent.expired() &&
 				current_move->parent.lock()->is_pass()) {
 			game_state = GameState::Scoring;
+			preview_indicator->hidden = true;
 		}
 
 	} else if (game_state == GameState::Scoring) {
