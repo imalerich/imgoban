@@ -1,16 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <adelie2d/adelie.h>
 
-#include "player/roboplayer.h"
-#include "player/userplayer.h"
 #include "constants.h"
-#include "game.h"
+#include "config.h"
 
-#define SHIT 30
-
-unsigned SCREEN_W = 1366;
-unsigned SCREEN_H = 768;
 Ad_Scene_p scene;
 Game_p g;
 
@@ -19,22 +12,11 @@ bool render();
 Ad_GameNode_p createBoardNode(Ad_Scene_p scene);
 
 int main(int argc, const char ** argv) {
-    if (!ad_init(SCREEN_W, SCREEN_H)) {
-	return 1;
-    }
+	Config c("../sample.cfg");
+    scene = c.create_scene();
+	if (scene == nullptr) { exit(1); }
+	g = c.create_game(scene);
 
-    scene = make_shared<Ad_Scene>(SCREEN_W, SCREEN_H);
-    g = make_shared<Game>(scene, 19, 6.5f);
-
-	// attach to bots to play against each other
-	g->attach_player(make_shared<RoboPlayer>(g->size, g->komi, 
-		"gnugo --mode gtp --level 1"), SLATE);
-	g->attach_player(make_shared<RoboPlayer>(g->size, g->komi, 
-		"gnugo --mode gtp --level 10"), SHELL);
-	// g->attach_player(make_shared<UserPlayer>(g->board, g->size), SLATE);
-	// g->attach_player(make_shared<UserPlayer>(g->board, g->size), SHELL);
-
-    ad_set_frame_rate(SHIT);
     return ad_run(update, render);
 }
 

@@ -24,6 +24,7 @@ add_executable(imGoban
     src/player/roboplayer.cpp
     src/player/userplayer.cpp
 
+    src/config.cpp
     src/game.cpp
     src/move.cpp
     src/goban.cpp
