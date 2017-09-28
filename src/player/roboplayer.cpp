@@ -2,10 +2,10 @@
 #include "player/roboplayer.h"
 #include "constants.h"
 
-RoboPlayer::RoboPlayer(unsigned BoardSize, float Komi) {
+RoboPlayer::RoboPlayer(unsigned BoardSize, float Komi, std::string engine) {
 	// setup the gtp engine
 	engine_controller = make_shared<gtp::Controller>(BoardSize, 6.5f);
-	engine_controller->attach_engine("/usr/bin/gnugo --mode gtp");
+	engine_controller->attach_engine(engine);
 }
 
 void RoboPlayer::move_played(Move_p move) {

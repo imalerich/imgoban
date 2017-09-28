@@ -6,7 +6,7 @@
 
 class RoboPlayer : public Player {
 public:
-	RoboPlayer(unsigned BoardSize, float Komi);
+	RoboPlayer(unsigned BoardSize, float Komi, std::string engine);
 
 	// override virtual functions of 'Player'
 	void move_played(Move_p move);

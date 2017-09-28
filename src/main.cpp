@@ -24,13 +24,15 @@ int main(int argc, const char ** argv) {
     }
 
     scene = make_shared<Ad_Scene>(SCREEN_W, SCREEN_H);
-    g = make_shared<Game>(scene, 9, 6.5f);
+    g = make_shared<Game>(scene, 19, 6.5f);
 
 	// attach to bots to play against each other
-	g->attach_player(make_shared<RoboPlayer>(g->size, g->komi), SLATE);
-	// g->attach_player(make_shared<RoboPlayer>(g->size, g->komi), SHELL);
+	g->attach_player(make_shared<RoboPlayer>(g->size, g->komi, 
+		"gnugo --mode gtp --level 1"), SLATE);
+	g->attach_player(make_shared<RoboPlayer>(g->size, g->komi, 
+		"gnugo --mode gtp --level 10"), SHELL);
 	// g->attach_player(make_shared<UserPlayer>(g->board, g->size), SLATE);
-	g->attach_player(make_shared<UserPlayer>(g->board, g->size), SHELL);
+	// g->attach_player(make_shared<UserPlayer>(g->board, g->size), SHELL);
 
     ad_set_frame_rate(SHIT);
     return ad_run(update, render);
