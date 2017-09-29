@@ -3,6 +3,7 @@
 
 #include "player/roboplayer.h"
 #include "player/userplayer.h"
+#include "imstring.h"
 #include "config.h"
 
 unsigned SCREEN_W = 1366;
@@ -33,48 +34,40 @@ Config::Config(std::string filename) {
 }
 
 void Config::read_line(std::string line) {
-	// remove all characters after the first comment character
-	size_t comment = line.size();
-	for (size_t i=0; i<line.size(); i++) { 
-		if (line[i] == '#') {
-			comment = i;
-			break;
-	}}
-
-	// remove all characters after & including the comment
-	while (line.size() > comment) { line.erase(line.size()-1, 1); }
-
-	// remove leading white space characters
-	while (line.size() && isspace(line[0])) { line.erase(0, 1); }
-
-	// ignore empty lines 
-	bool empty = true;
-	for (size_t i=0; i<line.size(); i++) { empty = empty && isspace(line[i]); }
-	if (empty) { return; }
+	line = remove_comments(line, '#');
+	line = trim_leading_whitespace(line);
+	if (is_string_empty(line)) { return; }
 
 	// read the first word, this is the property the remainder of the string will set
 	stringstream stream(line);
 	string command;
 	stream >> command;
 
-	// read the data stored by the command
+	/* --- Game Options --- */
+
 	if (command == "BOARD:") {
 		stream >> board_size;
+
 	} else if (command == "KOMI:") {
 		stream >> komi;
+
+	} else if (command == "HANDICAP:") {
+		stream >> handicap;
+
 	} else if (command == "WHITE:") {
 		// erase the command & leading white space characters
 		line.erase(0, command.size());
-		while (line.size() && isspace(line[0])) { line.erase(0, 1); }
-
+		line = trim_leading_whitespace(line);
 		white_player = line;
+
 	} else if (command == "BLACK:") {
 		// erase the command & leading white space characters
 		line.erase(0, command.size());
-		while (line.size() && isspace(line[0])) { line.erase(0, 1); }
-
+		line = trim_leading_whitespace(line);
 		black_player = line;
 	}
+
+	/* --- Adelie2d Options --- */
 
 	if (command == "SCREEN_W:") {
 		stream >> SCREEN_W;

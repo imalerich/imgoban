@@ -32,6 +32,7 @@ private:
 
 	size_t frame_rate; /**< Adelie render frame rate. */
 
+	size_t handicap; /**< Number of stones to give to black. */
 	size_t board_size; /**< Board size. */
 	float komi; /**< Komi given to white. */
 	std::string white_player; /**< Engine to run white, empty if human. */
