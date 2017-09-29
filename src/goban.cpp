@@ -86,8 +86,8 @@ void Goban::addGridToBoard() {
 }
 
 void Goban::addStarsToBoard() {
-	// 9x9 and 13x13 don't have perfect rotational symmetry
-	// add the center separately from other star points
+	// smaller boards won't include the midway points on the corners
+	// that larger boards will have, thus only add the points here
 	if (size == 9 || size == 13 || (size <= 13 && size % 2 == 1)) {
 		addStarPoint(0.5f, 0.5f);
 	}
@@ -98,6 +98,7 @@ void Goban::addStarsToBoard() {
 	size_t count = ((size > 13) && (size % 2 == 1)) ? 3 : 2;
 	float * POSITIONS = (float *)malloc(sizeof(float) * count);
 
+	// add count^2 points mirroring the board
 	switch (size) {
 		case 9:
 			POSITIONS[0] = 2.0 / 8.0;
