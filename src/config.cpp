@@ -47,6 +47,8 @@ void Config::read_line(std::string line) {
 
 	if (command == "BOARD:") {
 		stream >> board_size;
+		// minimum board size of 5
+		if (board_size < 5) { board_size = 5; }
 
 	} else if (command == "KOMI:") {
 		stream >> komi;

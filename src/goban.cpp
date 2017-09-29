@@ -65,8 +65,7 @@ void Goban::addToScene() {
     scene->get_root()->add_child(node);
 
     addGridToBoard();
-	// TODO - this should really work on n-dimmensional boards
-    // addStarsToBoard();
+    addStarsToBoard();
 
     if (!(font = al_load_ttf_font("../fonts/OpenSans-Regular.ttf", 12, 0))) {
 		cerr << "Failed to load board font at: ../fonts/OpenSans-Regular.ttf" << endl;
@@ -87,20 +86,65 @@ void Goban::addGridToBoard() {
 }
 
 void Goban::addStarsToBoard() {
-    const float POSITIONS[] = { 3/18.0f, 9/18.0f, 15/18.0f };
+	// 9x9 and 13x13 don't have perfect rotational symmetry
+	// add the center separately from other star points
+	if (size == 9 || size == 13 || (size <= 13 && size % 2 == 1)) {
+		addStarPoint(0.5f, 0.5f);
+	}
 
-    for (int i=0; i<3; i++) {
-		for (int k=0; k<3; k++) {
-			Ad_GameNode_p star = make_shared<Ad_GameNode>(Ad_Rect(
-			getGridSize() * POSITIONS[i] - (STAR_SIZE/2), 
-			getGridSize() * POSITIONS[k] - (STAR_SIZE/2), 
-			STAR_SIZE, STAR_SIZE
-			));
+	// anything smaller than 8x8 will only include a center star point
+	if (size < 8) { return; }
 
-			star->set_sprite_bitmap(ad_create_circle_bitmap(STAR_SIZE, DARK_COLOR));
-			grid->add_child(star);
-		}
-    }
+	size_t count = ((size > 13) && (size % 2 == 1)) ? 3 : 2;
+	float * POSITIONS = (float *)malloc(sizeof(float) * count);
+
+	switch (size) {
+		case 9:
+			POSITIONS[0] = 2.0 / 8.0;
+			POSITIONS[1] = 6.0 / 8.0;
+			break;
+		case 13:
+			POSITIONS[0] = 3.0 / 12.0;
+			POSITIONS[1] = 9.0 / 12.0;
+			break;
+		case 19:
+			POSITIONS[0] = 3.0  / 18.0;
+			POSITIONS[1] = 9.0  / 18.0;
+			POSITIONS[2] = 15.0 / 18.0;
+			break;
+		default:
+			if (size > 13 && (size % 2 == 1)) {
+				POSITIONS[0] = 3.0 / (float)(size-1);
+				POSITIONS[1] = 0.5f;
+				POSITIONS[2] = (size-1-3) / (float)(size-1);
+			} else if (size > 9) {
+				POSITIONS[0] = 3.0 / (size-1);
+				POSITIONS[1] = (size-1-3) / (float)(size-1);
+			} else {
+				POSITIONS[0] = 2.0 / (size-1);
+				POSITIONS[1] = (size-1-2) / (float)(size-1);
+			}
+
+			break;
+	}
+
+    for (size_t i=0; i<count; i++) {
+		for (size_t k=0; k<count; k++) {
+			addStarPoint(POSITIONS[i], POSITIONS[k]);
+	}}
+
+	free(POSITIONS);
+}
+
+void Goban::addStarPoint(float x, float y) {
+	Ad_GameNode_p star = make_shared<Ad_GameNode>(Ad_Rect(
+		getGridSize() * x - (STAR_SIZE/2), 
+		getGridSize() * y - (STAR_SIZE/2), 
+		STAR_SIZE, STAR_SIZE
+	));
+
+	star->set_sprite_bitmap(ad_create_circle_bitmap(STAR_SIZE, DARK_COLOR));
+	grid->add_child(star);
 }
 
 /* ---------------------------------------------------------------------------------------------

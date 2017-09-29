@@ -61,6 +61,7 @@ private:
     void addToScene();
     void addGridToBoard();
     void addStarsToBoard();
+	void addStarPoint(float x, float y);
 };
 
 #endif
