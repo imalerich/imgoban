@@ -71,6 +71,24 @@ void Game::update() {
 					/ board->getGridSize());
 			toggle_dead(x, y);
 		}
+	} else if (game_state == GameState::Over) {
+		static bool has_output_score = false;
+
+		// TODO: This sucks, fix it, I'm on a plane and don't have time.
+		if (!has_output_score) {
+			// finalize dead stones
+			for (unsigned i=0; i<(size*size); i++) {
+				state[i] = (state[i] == SLATE_DEAD || state[i] == SHELL_DEAD) ?
+					NOPLAYER : state[i];
+			}
+
+			// now score the board, this will output territory
+			// eventuall we'll need to do this another way
+			score_board();
+			
+			// only do this once
+			has_output_score = true;
+		}
 	}
 
 	create_update_move_indicator();
@@ -91,7 +109,9 @@ void Game::check_and_update_state() {
 		}
 
 	} else if (game_state == GameState::Scoring) {
-		// TODO
+		if (ad_is_button_released(1)) {
+			game_state = GameState::Over;
+		}
 	}
 }
 
@@ -165,7 +185,8 @@ void Game::create_update_move_indicator() {
 	if (current_move && !move_indicator) {
 		move_indicator = make_shared<Ad_GameNode>(Ad_Rect(
 			0, 0, SIZE, SIZE), 5);
-		move_indicator->set_sprite_bitmap(ad_create_rect_bitmap(Ad_Vector2(SIZE, SIZE), INDICATOR_COLOR));
+		move_indicator->set_sprite_bitmap(
+			ad_create_rect_bitmap(Ad_Vector2(SIZE, SIZE), INDICATOR_COLOR));
 		board->node->add_child(move_indicator);
 	}
 
@@ -356,6 +377,68 @@ void Game::toggle_dead(unsigned X, unsigned Y) {
 			if (abs(x) == abs(y)) { continue; }
 			if (get_stone(X+x, Y+y) == remove_for) { toggle_dead(X+x, Y+y); }
     }}
+}
+
+void Game::score_board() {
+	// game must be complete in order to score
+	if (game_state != GameState::Over) { return; }
+
+	// TODO - Do this somewhere else where we can 
+	// TODO - include komi and captures
+	unsigned black_territory = 0;
+	unsigned white_territory =  0;
+
+	// iterate over each position
+	for (unsigned x=0; x<size; x++) {
+		for (unsigned y=0; y<size; y++) {
+			// only evaluate territory for open spaces
+			if (get_stone(x,y) != NOPLAYER) { continue; }
+
+			bool reach_w = can_reach_player(x, y, SHELL);
+			bool reach_b = can_reach_player(x, y, SLATE);
+
+			if (reach_w && !reach_b) {
+				set_stone(x, y, SHELL_TERRITORY);
+				++white_territory;
+			} else if (reach_b && !reach_w) {
+				set_stone(x, y, SLATE_TERRITORY);
+				++black_territory;
+			} else {
+				set_stone(x, y, NO_TERRITORY);
+	}}}
+
+	cout << "Black has " << black_territory << " Points of Territory." << endl;
+	cout << "White has " << white_territory << " Points of Territory." << endl;
+    cout << (string)(*this) << endl << endl;
+}
+
+bool Game::can_reach_player(unsigned X, unsigned Y, unsigned Player, bool clean) {
+	// game must be complete in order to score
+	if (game_state != GameState::Over) { return false; }
+	if (get_stone(X,Y) == Player) { return true; }
+	set_stone(X, Y, NOPLAYER_CHECKED);
+
+	// recurse to adjacent stones
+	bool can_reach = false; // can an adjacent position reach?
+	for (int x=-1; x<=1; x++) {
+		for (int y=-1; y<=1; y++) {
+			if (abs(x) == abs(y)) { continue; }
+			if (get_stone(X+x, Y+y) == Player) { 
+				if (clean) { set_stone(X, Y, NOPLAYER);
+				return true; 
+			}
+
+			if (get_stone(X+x, Y+y) == NOPLAYER) {
+				can_reach = can_reach || can_reach_player(X+x, Y+y, Player, false);
+	}}}}
+
+	// reset marked empty spaces
+    if (clean) {
+		for (unsigned i=0; i<(size * size); i++) {
+			state[i] = (state[i] == NOPLAYER_CHECKED) ? NOPLAYER : state[i];
+	}}
+
+	return can_reach;
 }
 
 bool Game::is_move_unique(unsigned X, unsigned Y, unsigned Player) {

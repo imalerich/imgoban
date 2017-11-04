@@ -97,6 +97,9 @@ public:
 			if (state[i] == NOPLAYER) { out += ". "; }
 			if (state[i] == SLATE) { out += "x "; }
 			if (state[i] == SHELL) { out += "o "; }
+			if (state[i] == NO_TERRITORY) { out += ". "; }
+			if (state[i] == SLATE_TERRITORY) { out += "B "; }
+			if (state[i] == SHELL_TERRITORY) { out += "W "; }
 		}
 
 		out += "\n";
@@ -208,6 +211,26 @@ private:
      * If the given location is not set to NOPLAYER, this method will return false.
      */
     bool is_move_unique(unsigned X, unsigned Y, unsigned Player);
+
+	/**
+	 * Evaluates territory for the current board.
+	 * Upon completion, each board position will be marked 
+	 * with one of the following states:
+	 * 	1: SLATE -- Black Stone Occupied
+	 * 	2: SHELL -- White Stone Occupied
+	 * 	3: SLATE_TERRITORY -- Black Occupied Territory
+	 * 	4: SHELL_TERRITORY -- White Occupied Territory
+	 * 	5: NO_TERRITORY -- No Stone, No Territory
+	 */
+	void score_board();
+
+	/**
+	 * True if the input player can be reached from the input coordinate.
+	 * False if it cannot. Note, that if the input coordinate has a stone
+	 * of type Player, this method will return True.
+	 * The game state must be over in order to call this method.
+	 */
+	bool can_reach_player(unsigned X, unsigned Y, unsigned Player, bool clean = true);
 
     /**
      * \fn void swap_turn()
