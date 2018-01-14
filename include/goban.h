@@ -59,7 +59,6 @@ private:
     const unsigned size;
 
     void addToScene();
-	void addBackgroundToScene();
     void addGridToBoard();
     void addStarsToBoard();
 	void addStarPoint(float x, float y);
