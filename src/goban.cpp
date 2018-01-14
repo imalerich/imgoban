@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <math.h>
 
 #include "goban.h"
 #include "constants.h"
@@ -55,8 +56,16 @@ Ad_Vector2 Goban::grid_coords_for_pos(unsigned x, unsigned y) {
 void Goban::addToScene() {
     const unsigned offset = (SCREEN_W - BOARD_SIZE)/2;
 
+	const unsigned BORDER_SIZE = 4;
+	Ad_GameNode_p border = make_shared<Ad_GameNode>(Ad_Rect(offset - BORDER_SIZE, BOARD_PADDING/2 - BORDER_SIZE,
+		BOARD_SIZE + 2 * BORDER_SIZE, BOARD_SIZE + BOARD_DEPTH + 2 * BORDER_SIZE));
+	border->set_sprite_bitmap(ad_create_rect_bitmap(
+		Ad_Vector2(BOARD_SIZE + 2 * BORDER_SIZE, BOARD_SIZE + 2 * BORDER_SIZE + BOARD_DEPTH), 
+		BLACK));
+	scene->get_root()->add_child(border);
+
     Ad_GameNode_p bottom = make_shared<Ad_GameNode>(Ad_Rect(offset, BOARD_SIZE + BOARD_PADDING/2, 
-	BOARD_SIZE, BOARD_DEPTH));
+		BOARD_SIZE, BOARD_DEPTH));
     bottom->set_sprite_bitmap(ad_create_rect_bitmap(Ad_Vector2(BOARD_SIZE, BOARD_DEPTH), DARK_COLOR));
     scene->get_root()->add_child(bottom);
 

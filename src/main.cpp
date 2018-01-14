@@ -26,7 +26,7 @@ bool update() {
 }
 
 bool render() {
-    scene->render(al_map_rgb(32, 32, 32));
+    scene->render(al_map_rgb(173, 199, 206));
     g->render();
     return true;
 }
