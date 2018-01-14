@@ -56,6 +56,14 @@ Ad_Vector2 Goban::grid_coords_for_pos(unsigned x, unsigned y) {
 void Goban::addToScene() {
     const unsigned offset = (SCREEN_W - BOARD_SIZE)/2;
 
+	Ad_GameNode_p koi = make_shared<Ad_GameNode>("../img/koi.png", 
+		Ad_Rect(-35, SCREEN_H - 500, 384, 606));
+	scene->get_root()->add_child(koi);
+
+	Ad_GameNode_p koi2 = make_shared<Ad_GameNode>("../img/koi.png", 
+		Ad_Rect(SCREEN_W + 35, 500, -384, -606));
+	scene->get_root()->add_child(koi2);
+
 	const unsigned BORDER_SIZE = 4;
 	Ad_GameNode_p border = make_shared<Ad_GameNode>(Ad_Rect(offset - BORDER_SIZE, BOARD_PADDING/2 - BORDER_SIZE,
 		BOARD_SIZE + 2 * BORDER_SIZE, BOARD_SIZE + BOARD_DEPTH + 2 * BORDER_SIZE));
